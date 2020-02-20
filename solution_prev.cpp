@@ -10,8 +10,6 @@ struct library {
     int num_books;
     int index;
     vector<int> books;
-    vector<int> booksToSend;
-    bool zeroBooksToSend = false;
 
     bool operator<(const library & l2) {
         return (double) this->total_time / (double) this->signup_time > (double) l2.total_time / (double) l2.signup_time;
@@ -32,9 +30,6 @@ int b, num_libraries, d;
 vector<book> books;
 vector<library> Libraries;
 
-bool CompareBooksScoreOnly(const int& b1, const int& b2) {
-    return books[b1].score > books[b2].score;
-}
 
 bool CompareBooks(const int& b1, const int& b2) {
     return books[b1] < books[b2];
@@ -45,7 +40,7 @@ void input(const char* filename_in, const char* filename_out) {
     freopen(filename_in, "r", stdin);
     freopen(filename_out, "w", stdout);
     cin >> b >> num_libraries >> d;
-    bookScanned = vector<bool>(b, false);
+    bookScanned = vector<bool>(b);
     books = vector<book>(b);
     for (int i = 0; i < b; ++i) {
         cin >> books[i].score;
@@ -69,43 +64,33 @@ void input(const char* filename_in, const char* filename_out) {
 }
 
 void output() {
-    // go through libraries
+    cout << num_libraries << endl;
     sort(Libraries.begin(), Libraries.end());
-    for (auto& lib : Libraries) {
-        sort(lib.books.begin(), lib.books.end(), CompareBooks);
-        for (auto book : lib.books) {
+    for (int i = 0; i < num_libraries; ++i) {
+        // library index
+        cout << Libraries[i].index << " ";
+
+        // number of books to send
+        vector<int> booksToSend;
+        sort(Libraries[i].books.begin(), Libraries[i].books.end(), CompareBooks);
+        for (auto book : Libraries[i].books) {
             if (bookScanned[book]) continue;
             bookScanned[book] = true;
-            lib.booksToSend.push_back(book);
+            booksToSend.push_back(book);
         }
-        if (lib.booksToSend.size() == 0) {
-            lib.zeroBooksToSend = true;
-        }
-    }
 
-    vector<int> nonEmptyLibraries; // list of index of non empty libraries
-    for (int i = 0; i < Libraries.size(); ++i) {
-        if (Libraries[i].zeroBooksToSend) {
-            continue;
+        cout << ((booksToSend.size() == 0) ? 1 : booksToSend.size()) << endl;
+        // Compare book indexes based on vector<book> books
+        for (int b : booksToSend) {
+            cout << b << " ";
         }
-        nonEmptyLibraries.push_back(Libraries[i].index);
-    }
-
-    // cout
-    cout << nonEmptyLibraries.size() << endl;
-    for (int j = 0; j < nonEmptyLibraries.size(); ++j) {
-        // library index
-        cout << nonEmptyLibraries[j] << " ";
-        auto& lib = Libraries[nonEmptyLibraries[j]];
-        // number of books to send
-        cout << lib.booksToSend.size() << endl;
-        sort(lib.booksToSend.begin(), lib.booksToSend.end(), CompareBooksScoreOnly);
-        for (auto book : lib.booksToSend) {
-            cout << book << " ";
+        if (booksToSend.size() != 0) { 
+            cout << endl; 
+        } else {
+            // cout the first book if all books in the library have been scanned already
+            cout << Libraries[i].books[0] << endl;
         }
-        cout << endl;
     }
-   
 }
 
 int main() {
