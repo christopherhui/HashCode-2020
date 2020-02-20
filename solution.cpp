@@ -35,7 +35,7 @@ struct book {
 };
 
 
-int b, num_libraries, d; 
+int b, num_libraries, d; // number of books, number of libraries, number of days
 vector<book> books;
 vector<library> Libraries;
 
@@ -75,11 +75,19 @@ void input(const char* filename_in, const char* filename_out) {
         }
     }
 
+
     // "score function"
     for (auto& lib : Libraries) {
+        // penalty for book copies
+        int total_copies = 0;
+        for (auto b : lib.books) {
+            total_copies += books[b].copies;
+        }
+        lib.bookSum /= total_copies;
         // calculate a score for the library
         // return (double) this->total_time / (double) this->signup_time > (double) l2.total_time / (double) l2.signup_time;
-        lib.score = (double) lib.bookSum / ((double) lib.total_time + (double) lib.signup_time);
+        // lib.score = (double) lib.bookSum / ((double) lib.total_time + 20000 * (double) lib.signup_time / d);
+        lib.score = (double) lib.bookSum / ((double) lib.total_time + 20000 * (double) lib.signup_time / d);
     }
 }
 
