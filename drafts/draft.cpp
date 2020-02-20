@@ -9,19 +9,12 @@ struct library {
     int total_time;
     int num_books;
     int index;
-    int ship_rate;
     vector<int> books;
     vector<int> booksToSend;
-    int bookSum;
     bool zeroBooksToSend = false;
-    double score;
 
-    //bool operator<(const library & l2) {
-    //    return (double) this->total_time / (double) this->signup_time > (double) l2.total_time / (double) l2.signup_time;
-    //}
-
-    bool operator<(const library& l2) {
-        return this->score > l2.score;
+    bool operator<(const library & l2) {
+        return (double) this->total_time / (double) this->signup_time > (double) l2.total_time / (double) l2.signup_time;
     }
 };
 
@@ -61,25 +54,16 @@ void input(const char* filename_in, const char* filename_out) {
         int num_books; cin >> num_books;
         Libraries[i].index = i;
         Libraries[i].books = vector<int>(num_books);
-        Libraries[i].bookSum = 0;
-        cin >> Libraries[i].signup_time;
-        cin >> Libraries[i].ship_rate;
-        int days_to_complete = ceil((double) num_books / (double) Libraries[i].ship_rate);
-        Libraries[i].total_time = days_to_complete + Libraries[i].signup_time;
+
+        int signup; cin >> signup;
+        int ship_rate; cin >> ship_rate;
+        int days_to_complete = ceil((double) num_books / (double) ship_rate);
         for (int j = 0; j < num_books; ++j) {
             int index;
             cin >> index;
             Libraries[i].books[j] = index;
-            Libraries[i].bookSum += books[j].score;
             books[index].copies++;
         }
-    }
-
-    // "score function"
-    for (auto& lib : Libraries) {
-        // calculate a score for the library
-        // return (double) this->total_time / (double) this->signup_time > (double) l2.total_time / (double) l2.signup_time;
-        lib.score = (double) lib.bookSum / ((double) lib.total_time + (double) lib.signup_time);
     }
 }
 
@@ -114,9 +98,6 @@ void output() {
         auto& lib = Libraries[nonEmptyLibraries[j].second];
         // number of books to send
         cout << lib.booksToSend.size() << endl;
-        if (lib.booksToSend.size() == 0) {
-            cout << "break";
-        }
         sort(lib.booksToSend.begin(), lib.booksToSend.end(), CompareBooksScoreOnly);
         for (auto book : lib.booksToSend) {
             cout << book << " ";
