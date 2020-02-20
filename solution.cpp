@@ -35,9 +35,10 @@ bool CompareBooks(const int& b1, const int& b2) {
     return books[b1] < books[b2];
 }
 
-void input() {
-    freopen("f_libraries_of_the_world.txt", "r", stdin);
-    freopen("SUBMISSIONf.txt", "w", stdout);
+void input(const char* filename_in, const char* filename_out) {
+
+    freopen(filename_in, "r", stdin);
+    freopen(filename_out, "w", stdout);
     cin >> b >> num_libraries >> d;
     bookScanned = vector<bool>(b);
     books = vector<book>(b);
@@ -62,20 +63,14 @@ void input() {
     }
 }
 
-
-
-int main() {
-
-    input();
-
-    // output
+void output() {
     cout << num_libraries << endl;
     sort(Libraries.begin(), Libraries.end());
     for (int i = 0; i < num_libraries; ++i) {
         // library index
         cout << Libraries[i].index << " ";
-        // number of books to send
 
+        // number of books to send
         vector<int> booksToSend;
         sort(Libraries[i].books.begin(), Libraries[i].books.end(), CompareBooks);
         for (auto book : Libraries[i].books) {
@@ -89,6 +84,20 @@ int main() {
         for (int b : booksToSend) {
             cout << b << " ";
         }
-        cout << endl;
+        if (booksToSend.size() != 0) cout << endl;
     }
+}
+
+
+
+int main() {
+    vector<string> inputs = { "a_example.txt", "b_read_on.txt", "c_incunabula.txt",
+                              "d_tough_choices.txt", "e_so_many_books.txt", "f_libraries_of_the_world.txt" };
+    vector<string> outputs = { "SUBMISSIONa.txt", "SUBMISSIONb.txt", "SUBMISSIONc.txt",
+                               "SUBMISSIONd.txt", "SUBMISSIONe.txt", "SUBMISSIONf.txt" };
+    for (int i = 0; i < 6; ++i) {
+        input(inputs[i].c_str(), outputs[i].c_str());
+        output();
+    }
+
 }
